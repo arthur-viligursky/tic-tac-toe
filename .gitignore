@@ -1,0 +1,11 @@
+.env
+/var
+/www/node_modules
+/www/public/css
+/www/public/js
+/www/storage
+/www/vendor
+*.log
+.idea
+.DS_Store
+Thumbs.db
