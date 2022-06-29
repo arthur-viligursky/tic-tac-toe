@@ -48,8 +48,6 @@ class GameService
         } else {
             return null;
         }
-
-
     }
 
     public function getLastGame(Competition $competition): Game
@@ -74,6 +72,16 @@ class GameService
         return Player
             ::whereBelongsTo($competition)
             ->where('piece', $piece)
+            ->first()
+        ;
+    }
+
+    public function getTile(Game $game, array $coordinates): Tile
+    {
+        return Tile
+            ::whereBelongsTo($game)
+            ->where('x', $coordinates['x'])
+            ->where('y', $coordinates['y'])
             ->first()
         ;
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Services\GameService;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [GameController::class, 'defaultAction'])->name('game.default');
+    Route
+        ::post('/{piece}', [GameController::class, 'makeMoveAction'])
+        ->name('game.makeMove')
+        ->whereIn('piece', GameService::PIECES)
+    ;
 });
 
 Route::get('/dashboard', function () {
