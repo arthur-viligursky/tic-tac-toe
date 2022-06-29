@@ -74,8 +74,8 @@ class GameStartService
         DB::transaction(function() use ($competition, $game) {
             $game->competition()->associate($competition);
             $game->save();
-            foreach (range(0, Game::BOARD_SIZE) as $y) {
-                foreach (range(0, Game::BOARD_SIZE) as $x) {
+            foreach (range(0, Game::BOARD_SIZE - 1) as $y) {
+                foreach (range(0, Game::BOARD_SIZE - 1) as $x) {
                     $tile = new Tile(compact('x', 'y'));
                     $tile->game()->associate($game);
                     $tile->save();
