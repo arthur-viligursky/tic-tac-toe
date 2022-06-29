@@ -49,7 +49,7 @@ class GameController
         return response()->json($this->apiResponseService->getFullResponseData($competition));
     }
 
-    protected function getCompetition(): Competition
+    protected function getCompetition(): ?Competition
     {
         return $this->gameService->getCompetition(Auth::user());
     }
