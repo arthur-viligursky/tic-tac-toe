@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class GameStartService
 {
-    public const PLAY_AS_OPTION_NONE = 'none';
     public const PLAY_AS_OPTION_X = 'x';
     public const PLAY_AS_OPTION_O = 'o';
     public const PLAY_AS_OPTION_BOTH = 'both';
-    public const PLAY_AS_OPTIONS = [self::PLAY_AS_OPTION_NONE, self::PLAY_AS_OPTION_X, self::PLAY_AS_OPTION_O, self::PLAY_AS_OPTION_BOTH];
+    public const PLAY_AS_OPTIONS = [self::PLAY_AS_OPTION_X, self::PLAY_AS_OPTION_O, self::PLAY_AS_OPTION_BOTH];
 
     protected GameService $gameService;
     protected MoveService $moveService;
