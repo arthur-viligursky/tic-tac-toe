@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Competition;
 use App\Services\ApiResponseService;
 use App\Services\GameService;
+use App\Services\GameStartService;
 use App\Services\MoveService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,18 +13,20 @@ use Illuminate\Support\Facades\Auth;
 
 class GameController
 {
-
     protected ApiResponseService $apiResponseService;
-    protected MoveService $moveService;
     protected GameService $gameService;
+    protected GameStartService $gameStartService;
+    protected MoveService $moveService;
 
     public function __construct(
         ApiResponseService $apiResponseService,
         GameService $gameService,
+        GameStartService $gameStartService,
         MoveService $moveService,
     ) {
         $this->apiResponseService = $apiResponseService;
         $this->gameService = $gameService;
+        $this->gameStartService = $gameStartService;
         $this->moveService = $moveService;
     }
 
@@ -31,8 +34,7 @@ class GameController
     {
         $competition = $this->getCompetition();
         if ($competition === null) {
-            $options = $request->all();
-            $competition = $this->gameService->startCompetition($options, Auth::user());
+            $competition = $this->startCompetition($request);
         }
 
         return response()->json($this->apiResponseService->getResponseData($competition));
@@ -59,8 +61,15 @@ class GameController
     public function restartAction(): JsonResponse
     {
         $competition = $this->getCompetition();
-        $this->gameService->restartGame($competition);
+        $this->gameStartService->restartGame($competition);
 
         return response()->json($this->apiResponseService->getResponseData($competition));
+    }
+
+    protected function startCompetition(Request $request): Competition
+    {
+        $options = $request->all();
+
+        return $this->gameStartService->startCompetition($options, Auth::user());
     }
 }

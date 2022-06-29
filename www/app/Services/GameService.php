@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class GameService
 {
-    public const PLAY_AS_OPTION_NONE = 'none';
-    public const PLAY_AS_OPTION_X = 'x';
-    public const PLAY_AS_OPTION_O = 'o';
-    public const PLAY_AS_OPTION_BOTH = 'both';
-    public const PLAY_AS_OPTIONS = [self::PLAY_AS_OPTION_NONE, self::PLAY_AS_OPTION_X, self::PLAY_AS_OPTION_O, self::PLAY_AS_OPTION_BOTH];
     public const PIECES = ['x', 'o'];
 
     public function getBoard(Game $game): array
@@ -92,74 +87,5 @@ class GameService
             Game::STATUS_X_WON => 'x',
             default => '',
         };
-    }
-
-    public function restartGame(Competition $competition): void
-    {
-        DB::transaction(function() use ($competition) {
-            $lastGame = $this->getLastGame($competition);
-            $this->updateScore($lastGame);
-            $this->startGame($competition);
-        });
-    }
-
-    public function startCompetition(array $options, User $user): Competition
-    {
-        $competition = new Competition();
-        $options += [
-            'aiStrength' => AiService::DEFAULT_STRENGTH,
-            'playAs' => 'both',
-        ];
-
-        DB::transaction(function() use ($competition, $options, $user) {
-            $competition->user()->associate($user);
-            $competition->save();
-            foreach (static::PIECES as $piece) {
-                $player = new Player([
-                    'is_ai' => ($options['playAs'] !== $piece && $options['playAs'] !== 'both'),
-                    'piece' => $piece,
-                    'score' => 0,
-                ]);
-                $player->competition()->associate($competition);
-                $player->save();
-            }
-            $this->startGame($competition);
-        });
-
-        return $competition;
-    }
-
-    protected function startGame(Competition $competition): Game
-    {
-        $game = new Game([
-            'status' => Game::STATUS_ONGOING,
-        ]);
-
-        DB::transaction(function() use ($competition, $game) {
-            $game->competition()->associate($competition);
-            $game->save();
-            foreach (range(0, 2) as $y) {
-                foreach (range(0, 2) as $x) {
-                    $tile = new Tile(compact('x', 'y'));
-                    $tile->game()->associate($game);
-                    $tile->save();
-                }
-            }
-        });
-
-        return $game;
-    }
-
-    protected function updateScore(Game $game): void
-    {
-        $winnerPiece = $this->getWinnerPiece($game);
-        if ($winnerPiece === '') {
-            return;
-        }
-
-        $competition = $game->competition;
-        $player = $this->getPlayer($competition, $winnerPiece);
-        $player->score++;
-        $player->save();
     }
 }

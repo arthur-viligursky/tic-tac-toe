@@ -32,7 +32,7 @@ class MoveService
         $this->makeMove($piece, $coordinates, $game);
     }
 
-    protected function makeAiMoveIfNeeded(Game $game): void
+    public function makeAiMoveIfNeeded(Game $game): void
     {
         $currentTurn = $this->gameService->getCurrentTurn($game);
         $player = $this->gameService->getPlayer($game->competition, $currentTurn);
