@@ -86,6 +86,23 @@ class GameService
         ;
     }
 
+    public function getWinnerPiece(Game $game) {
+        return match ($game->status) {
+            Game::STATUS_O_WON => 'o',
+            Game::STATUS_X_WON => 'x',
+            default => '',
+        };
+    }
+
+    public function restartGame(Competition $competition): void
+    {
+        DB::transaction(function() use ($competition) {
+            $lastGame = $this->getLastGame($competition);
+            $this->updateScore($lastGame);
+            $this->startGame($competition);
+        });
+    }
+
     public function startCompetition(array $options, User $user): Competition
     {
         $competition = new Competition();
@@ -112,7 +129,7 @@ class GameService
         return $competition;
     }
 
-    public function startGame(Competition $competition): Game
+    protected function startGame(Competition $competition): Game
     {
         $game = new Game([
             'status' => Game::STATUS_ONGOING,
@@ -131,5 +148,18 @@ class GameService
         });
 
         return $game;
+    }
+
+    protected function updateScore(Game $game): void
+    {
+        $winnerPiece = $this->getWinnerPiece($game);
+        if ($winnerPiece === '') {
+            return;
+        }
+
+        $competition = $game->competition;
+        $player = $this->getPlayer($competition, $winnerPiece);
+        $player->score++;
+        $player->save();
     }
 }

@@ -11,10 +11,6 @@ class MoveService
     public const RESULT_CANNOT_MAKE_MOVE = 406;
     public const RESULT_CONFLICT = 409;
     public const RESULT_OK = 200;
-    public const VICTORY_STATUSES = [
-        'x' => Game::STATUS_X_WON,
-        'o' => Game::STATUS_O_WON,
-    ];
 
     protected AiService $aiService;
     protected GameService $gameService;
@@ -77,18 +73,7 @@ class MoveService
         $game->status = $this->gameResultService->getGameResult($board);
         if ($game->status === Game::STATUS_ONGOING) {
             $this->makeAiMoveIfNeeded($game);
-        } else if ($game->status !== Game::STATUS_DRAW) {
-            $this->updateScore($game);
         }
         $game->save();
-    }
-
-    protected function updateScore(Game $game): void
-    {
-        $competition = $game->competition;
-        $winningPiece = array_flip(static::VICTORY_STATUSES)[$game->status];
-        $player = $this->gameService->getPlayer($competition, $winningPiece);
-        $player->score++;
-        $player->save();
     }
 }

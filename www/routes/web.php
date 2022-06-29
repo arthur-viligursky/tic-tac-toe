@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
         ->name('game.makeMove')
         ->whereIn('piece', GameService::PIECES)
     ;
+    Route::post('/restart', [GameController::class, 'restartAction'])->name('game.restart');
 });
 
 Route::get('/dashboard', function () {

@@ -23,16 +23,8 @@ class ApiResponseService
             $score[$piece] = $this->gameService->getPlayer($competition, $piece)->score;
         }
         $currentTurn = ($this->gameService->getCurrentTurn($game) ?? 'finished');
-        $victory = $this->getVictory($game);
+        $victory = $this->gameService->getWinnerPiece($game);
 
         return compact('board', 'score', 'currentTurn', 'victory');
-    }
-
-    protected function getVictory(Game $game) {
-        return match ($game->status) {
-            Game::STATUS_O_WON => 'o',
-            Game::STATUS_X_WON => 'x',
-            default => '',
-        };
     }
 }

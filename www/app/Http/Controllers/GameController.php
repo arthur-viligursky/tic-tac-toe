@@ -55,4 +55,12 @@ class GameController
 
         return response()->json($this->apiResponseService->getResponseData($competition));
     }
+
+    public function restartAction(): JsonResponse
+    {
+        $competition = $this->getCompetition();
+        $this->gameService->restartGame($competition);
+
+        return response()->json($this->apiResponseService->getResponseData($competition));
+    }
 }
