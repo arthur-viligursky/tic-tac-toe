@@ -55,7 +55,7 @@ class GameService
         return Game
             ::query()
             ->whereBelongsTo($competition)
-            ->orderBy('created_at', 'desc')
+            ->orderBy('id', 'desc')
             ->first()
         ;
     }
