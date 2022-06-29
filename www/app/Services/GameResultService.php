@@ -51,8 +51,8 @@ class GameResultService
                 $horizontalLine[] = [$coordinate1, $coordinate2];
                 $verticalLine[] = [$coordinate2, $coordinate1];
             }
-            $lines[] = [$horizontalLine];
-            $lines[] = [$verticalLine];
+            $lines[] = $horizontalLine;
+            $lines[] = $verticalLine;
             $diagonalLine1[] = [$coordinate1, $coordinate1];
             $diagonalLine2[] = [$coordinate1, Game::BOARD_SIZE - $coordinate1 - 1];
         }
