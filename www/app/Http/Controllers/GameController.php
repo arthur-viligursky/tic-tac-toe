@@ -5,20 +5,20 @@ namespace App\Http\Controllers;
 use App\Services\ApiResponseService;
 use App\Services\GameService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\NewCompetitionRequest;
 
 class GameController
 {
     public function defaultAction(
         ApiResponseService $apiResponseService,
         GameService $gameService,
-        NewCompetitionRequest $request
+        Request $request
     ): JsonResponse {
         $user = Auth::user();
         $competition = $gameService->getCompetition($user);
         if ($competition === null) {
-            $options = $request->validated();
+            $options = $request->all();
             $competition = $gameService->startCompetition($options, $user);
         }
 
