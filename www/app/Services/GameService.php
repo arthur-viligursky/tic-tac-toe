@@ -13,6 +13,11 @@ class GameService
 {
     public const PIECES = ['x', 'o'];
 
+    public function deleteCompetition(Competition $competition): void
+    {
+        $competition->delete();
+    }
+
     public function getBoard(Game $game): array
     {
         $result = [];

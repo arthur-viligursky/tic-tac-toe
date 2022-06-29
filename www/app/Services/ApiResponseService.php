@@ -14,7 +14,15 @@ class ApiResponseService
         $this->gameService = $gameService;
     }
 
-    public function getResponseData(Competition $competition): array
+    public function getCurrentTurnResponseData(Competition $competition): array
+    {
+        $game = $this->gameService->getLastGame($competition);
+        $currentTurn = ($this->gameService->getCurrentTurn($game) ?? 'finished');
+
+        return compact('currentTurn');
+    }
+
+    public function getFullResponseData(Competition $competition): array
     {
         $game = $this->gameService->getLastGame($competition);
         $board = $this->gameService->getBoard($game);

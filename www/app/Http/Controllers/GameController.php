@@ -30,6 +30,15 @@ class GameController
         $this->moveService = $moveService;
     }
 
+    public function deleteAction(Request $request): JsonResponse
+    {
+        $oldCompetition = $this->getCompetition();
+        $this->gameService->deleteCompetition($oldCompetition);
+        $newCompetition = $this->startCompetition($request);
+
+        return response()->json($this->apiResponseService->getCurrentTurnResponseData($newCompetition));
+    }
+
     public function defaultAction(Request $request): JsonResponse
     {
         $competition = $this->getCompetition();
@@ -37,7 +46,7 @@ class GameController
             $competition = $this->startCompetition($request);
         }
 
-        return response()->json($this->apiResponseService->getResponseData($competition));
+        return response()->json($this->apiResponseService->getFullResponseData($competition));
     }
 
     protected function getCompetition(): Competition
@@ -55,7 +64,7 @@ class GameController
             abort($result);
         }
 
-        return response()->json($this->apiResponseService->getResponseData($competition));
+        return response()->json($this->apiResponseService->getFullResponseData($competition));
     }
 
     public function restartAction(): JsonResponse
@@ -63,7 +72,7 @@ class GameController
         $competition = $this->getCompetition();
         $this->gameStartService->restartGame($competition);
 
-        return response()->json($this->apiResponseService->getResponseData($competition));
+        return response()->json($this->apiResponseService->getFullResponseData($competition));
     }
 
     protected function startCompetition(Request $request): Competition

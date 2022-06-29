@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', [GameController::class, 'defaultAction'])->name('game.default');
+    Route::delete('/', [GameController::class, 'deleteAction'])->name('game.delete');
+    Route::get('/delete', [GameController::class, 'deleteAction'])->name('game.deleteAlternative');
     Route
         ::post('/{piece}', [GameController::class, 'makeMoveAction'])
         ->name('game.makeMove')
