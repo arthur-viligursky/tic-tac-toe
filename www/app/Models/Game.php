@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
+    public const BOARD_SIZE = 3;
+
     public const STATUS_DRAW = 'draw';
     public const STATUS_O_WON = 'o won';
     public const STATUS_ONGOING = 'ongoing';

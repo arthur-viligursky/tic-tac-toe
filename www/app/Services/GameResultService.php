@@ -41,14 +41,23 @@ class GameResultService
     }
 
     public function getGameResult(array $board): string {
-        $lines = [
-            [[0, 0], [1, 1], [2, 2]],
-            [[0, 2], [1, 1], [0, 2]],
-        ];
-        foreach (range(0, 2) as $coordinate) {
-            $lines[] = [[$coordinate, 0], [$coordinate, 1], [$coordinate, 2]];
-            $lines[] = [[0, $coordinate], [1, $coordinate], [2, $coordinate]];
+        $lines = [];
+        $diagonalLine1 = [];
+        $diagonalLine2 = [];
+        foreach (range(0, Game::BOARD_SIZE - 1) as $coordinate1) {
+            $horizontalLine = [];
+            $verticalLine = [];
+            foreach (range(0, Game::BOARD_SIZE - 1) as $coordinate2) {
+                $horizontalLine[] = [$coordinate1, $coordinate2];
+                $verticalLine[] = [$coordinate2, $coordinate1];
+            }
+            $lines[] = [$horizontalLine];
+            $lines[] = [$verticalLine];
+            $diagonalLine1[] = [$coordinate1, $coordinate1];
+            $diagonalLine2[] = [$coordinate1, Game::BOARD_SIZE - $coordinate1 - 1];
         }
+        $lines[] = $diagonalLine1;
+        $lines[] = $diagonalLine2;
         foreach ($lines as $line) {
             $victory = $this->checkLine($board, $line);
             if ($victory !== null) {
