@@ -61,9 +61,9 @@ class MoveService
         $player = $this->gameService->getPlayer($game->competition, $piece);
         DB::transaction(function() use ($game, $move, $player, $tile) {
             $move->game()->associate($game);
+            $move->player()->associate($player);
             $move->save();
             $tile->move()->associate($move);
-            $move->player()->associate($player);
             $tile->save();
             $this->updateGame($game);
         });

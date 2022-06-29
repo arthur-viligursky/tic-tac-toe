@@ -10,7 +10,7 @@ class GameResultService
     {
         $winningPiece = null;
         foreach ($coordinates as $coordinate) {
-            $currentPiece = $board[$coordinate['y']][$coordinate['x']];
+            $currentPiece = $board[$coordinate[1]][$coordinate[0]];
             if ($currentPiece === '') {
                 return null;
             }
