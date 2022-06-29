@@ -83,7 +83,7 @@ class GameService
         $competition = new Competition();
         $options += [
             'aiStrength' => AiService::DEFAULT_STRENGTH,
-            'playAs' => static::PIECES[mt_rand(0, 1)],
+            'playAs' => 'both',
         ];
 
         DB::transaction(function() use ($competition, $options, $user) {
