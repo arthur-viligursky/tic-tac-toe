@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Competition;
 use App\Services\ApiResponseService;
 use App\Services\GameService;
 use App\Services\MoveService;
@@ -11,37 +12,47 @@ use Illuminate\Support\Facades\Auth;
 
 class GameController
 {
-    public function defaultAction(
-        ApiResponseService $apiResponseService,
-        GameService $gameService,
-        Request $request
-    ): JsonResponse {
-        $user = Auth::user();
-        $competition = $gameService->getCompetition($user);
-        if ($competition === null) {
-            $options = $request->all();
-            $competition = $gameService->startCompetition($options, $user);
-        }
 
-        return response()->json($apiResponseService->getResponseData($competition));
-    }
+    protected ApiResponseService $apiResponseService;
+    protected MoveService $moveService;
+    protected GameService $gameService;
 
-    public function makeMoveAction(
-        string $piece,
+    public function __construct(
         ApiResponseService $apiResponseService,
         GameService $gameService,
         MoveService $moveService,
-        Request $request,
-    ): JsonResponse {
-        $user = Auth::user();
-        $competition = $gameService->getCompetition($user);
-        $game = $gameService->getLastGame($competition);
+    ) {
+        $this->apiResponseService = $apiResponseService;
+        $this->gameService = $gameService;
+        $this->moveService = $moveService;
+    }
+
+    public function defaultAction(Request $request): JsonResponse
+    {
+        $competition = $this->getCompetition();
+        if ($competition === null) {
+            $options = $request->all();
+            $competition = $this->gameService->startCompetition($options, Auth::user());
+        }
+
+        return response()->json($this->apiResponseService->getResponseData($competition));
+    }
+
+    protected function getCompetition(): Competition
+    {
+        return $this->gameService->getCompetition(Auth::user());
+    }
+
+    public function makeMoveAction(string $piece, Request $request): JsonResponse
+    {
+        $competition = $this->getCompetition();
+        $game = $this->gameService->getLastGame($competition);
         $coordinates = $request->all();
-        $result = $moveService->makeMove($piece, $coordinates, $game);
+        $result = $this->moveService->makeMove($piece, $coordinates, $game);
         if ($result !== MoveService::RESULT_OK) {
             abort($result);
         }
 
-        return response()->json($apiResponseService->getResponseData($competition));
+        return response()->json($this->apiResponseService->getResponseData($competition));
     }
 }
